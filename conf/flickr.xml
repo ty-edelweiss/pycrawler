@@ -1,0 +1,100 @@
+<flickr>
+  <method name="photos">
+    <api name="search">
+      <node name="api_key" type="str" protocol="free" required="required">
+      </node>
+      <node name="user_id" type="str" protocol="free" required="optional">
+      </node>
+      <node name="tags" type="str" porotocol="free" required="optional">
+      </node>
+      <node name="tag_mode" type="str" protocol="any,all" required="optional">
+      </node>
+      <node name="text" type="str" protocol="free" required="optional">
+      </node>
+      <node name="min_upload_date" type="str" protocol="unixtime,mysql-datetime" required="optional">
+      </node>
+      <node name="max_upload_date" type="str" protocol="unixtime,mysql-datetime" required="optional">
+      </node>
+      <node name="min_taken_date" type="str" protocol="unixtime,mysql-datetime" required="optional">
+      </node>
+      <node name="max_taken_date" type="str" protocol="unixtime,mysql-datetime" required="optional">
+      </node>
+      <node name="license" type="str" protocol="free" required="optional">
+      </node>
+      <node name="sort" type="str" protocol="date-posted-asc,date-posted-desc,date-taken-asc,date-taken-desc,interestingness-asc,interestingness-desc" required="optional">
+      </node>
+      <node name="privacy_filter" type="int" protocol="1,2,3,4,5" required="optional">
+      </node>
+      <node name="bbox" type="double" protocol="minimum_longitude,minimum_latitude,maximum_longitude,maximum_latitude" required="optional">
+      </node>
+      <node name="accuracy" type="int" protocol="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16" required="optional">
+      </node>
+      <node name="safe_search" type="int" protocol="1,2,3" required="optional">
+      </node>
+      <node name="content_type" type="int" protocol="1,2,3,4,5,6,7" required="optional">
+      </node>
+      <node name="machine_tags" type="str" protocol="free" required="optional">
+      </node>
+      <node name="machine_tag_mode" type="str" protocol="any,all" required="optional">
+      </node>
+      <node name="group_id" type="str" protocol="free" required="optional">
+      </node>
+      <node name="contacts" type="str" protocol="any,ff" required="optional">
+      </node>
+      <node name="woe_id" type="str" protocol="free" required="optional">
+      </node>
+      <node name="place_id" type="str" protocol="free" required="optional">
+      </node>
+      <node name="media" type="str" protocol="all,photos,videos" required="optional">
+      </node>
+      <node name="has_geo" type="int" protocol="0,1" required="optional">
+      </node>
+      <node name="geo_context" type="int" protocol="0,1,2" required="optional">
+      </node>
+      <node name="lat" type="str" protocol="free" required="optional">
+      </node>
+      <node name="lon" type="str" protocol="free" required="optional">
+      </node>
+      <node name="radius" type="int" protocol="0-32" required="optional">
+      </node>
+      <node name="radius_units" type="str" protocol="km,mi" required="optional">
+      </node>
+      <node name="is_commons" type="bool" protocol="true,false" required="optional">
+      </node>
+      <node name="in_gallery" type="bool" protocol="true,false" required="optional">
+      </node>
+      <node name="is_getty" type="bool" protocol="true,false" required="optional">
+      </node>
+      <node name="extras" type="str" protocol="description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,rul_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o" required="optional">
+      </node>
+      <node name="per_page" type="int" protocol="0-500" required="optional">
+      </node>
+      <node name="page" type="int" protocol="0-500" required="optional">
+      </node>
+    </api>
+    <api name="getInfo">
+      <node name="api_key" type="str" protocol="free" required="required">
+      </node>
+      <node name="photo_id" type="str" protocol="free" required="required">
+      </node>
+      <node name="secret" type="str" protocol="free" required="optional">
+      </node>
+    </api>
+  </method>
+  <method name="place">
+    <api name="find">
+      <node name="api_key" type="str" protocol="free" required="required">
+      </node>
+      <node name="query" type="str" protocol="free" required="required">
+      </node>
+    </api>
+    <api name="getInfo">
+      <node name="api_key" type="str" protocol="free" required="required">
+      </node>
+      <node name="place_id" type="str" protocol="free" required="optional">
+      </node>
+      <node name="woe_id" type="str" protocol="free" required="optional">
+      </node>
+    </api>
+  </method>
+</flickr>
