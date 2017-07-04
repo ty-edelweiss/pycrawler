@@ -8,14 +8,16 @@ from typing import List, Dict, Any
 
 from .access import Accessor
 from .append import Appender
+from .options import OptionModel
 
 class DataGetter(threading.Thread):
 
-    def __init__(self, cache: queue.Queue, flagment: bool, app_options: Dict[str, Any], **kwrds):
+    def __init__(self, cache: queue.Queue, notice: bool, api_model: OptionModel, **kwrds):
         super(DataGetter).__init__()
         self.logger_ = logging.getLogger(__name__)
         self.cache_ = cache
-        self.flagment_ = flagment
+        self.flag_ = notice
+        self.options_ = api_model
         self.running_ = False
 
     def kill(self) -> object:
@@ -28,21 +30,22 @@ class DataGetter(threading.Thread):
         while self.running_:
             self.logger_.info("Data getter process running ... ")
             if accessor.next():
-                data = accessor.get()
+                data = accessor.get(self.options_)
                 self.cache_.push(data)
             else:
-                self.flagment_ = True
+                self.flag_ = True
                 break
 
         self.logger_.info("Data getter process shutdown")
 
 class DataMapper(threading.Thread):
 
-    def __init__(self, cache: queue.Queue, flagment: bool, app_options: Dict[str, Any], **kwrds):
+    def __init__(self, cache: queue.Queue, notice: bool, app_model: OptionModel, **kwrds):
         super(DataMapper).__init__()
         self.logger_ = logging.getLogger(__name__)
         self.cache_ = cache
-        self.flagment_ = flagment
+        self.flag_ = notice
+        self.options_ = app_model
         self.running_ = False
 
     def kill(self) -> object:
@@ -54,11 +57,11 @@ class DataMapper(threading.Thread):
 
         while self.running_:
             self.logger_.info("Data mapper process running ... ")
-            if self.flagment_ and self.cache_.empty():
+            if self.flag_ and self.cache_.empty():
                 break
             else:
                 data = self.cache_.get()
                 for appender in appenders:
-                    appender.append(data)
+                    appender.append(data, self.options_)
 
         self.logger_.info("Data mapper process shutdown")

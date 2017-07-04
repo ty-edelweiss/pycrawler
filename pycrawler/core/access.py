@@ -9,12 +9,12 @@ from typing import List, Dict, Any
 
 class Accessor(object):
 
-    def __init__(self):
+    def __init__(self, *args, **kwrds):
         """
         data accessor to api by target url.
         """
 
-    def get(self) -> Any:
+    def get(self, *args, **kwrds) -> Any:
         """
         accessing process by target url
         and this method is overrided absolutely.
@@ -22,11 +22,10 @@ class Accessor(object):
 
 class ApiAccessor(Accessor):
 
-    def __init__(self, url: str):
+    def __init__(self):
         super().__init__()
         self.lock_ = threading.Lock()
-        self.logger_ = logging.logger(__name__)
-        self.url_ = url
+        self.logger_ = logging.getLogger(__name__)
         self.status_ = "ok"
 
     def next(self) -> bool:

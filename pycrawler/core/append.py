@@ -10,12 +10,12 @@ from typing import List, Dict, Any
 
 class Appender(object):
 
-    def __init__(self):
+    def __init__(self, *args, **kwrds):
         """
         data appender multi format -> default format [ConsoleAppender].
         """
 
-    def set(self) -> None:
+    def append(self, *args, **kwrds) -> None:
         """
         appending process by multi format
         and this method is overrided absolutely.
@@ -34,23 +34,22 @@ class ConsoleAppender(Appender):
 
 class FileAppender(Appender):
 
-    def __init__(self, max_bytes: int = 1000, max_backups: int = 3):
+    def __init__(self, target: str):
         super().__init__()
         self.lock_ = threading.Lock()
         self.logger_ = logging.getLogger(__name__)
-        self.max_bytes_ = max_bytes
-        self.max_buckups_ = max_backups
+        self.self.file_path__ = target
 
-    def append(self, file_path: str, column_names: List[str], data: List[Dict[str, Any]]) -> None:
+    def append(self, column_names: List[str], data: List[Dict[str, Any]]) -> None:
         with self.lock_:
-            if os.path.isfile(file_path):
+            if os.path.isfile(self.file_path_):
                 headers = ", ".join(column_names)
-                with open(file_path, "w") as f:
+                with open(self.file_path_, "w") as f:
                     f.write(headers)
             try:
-                with open(file_path, "a") as f:
+                with open(self.file_path_, "a") as f:
                     f.write(",".join(data))
-                self.logger_.info("Success write to " + file_path + " with csv")
+                self.logger_.info("Success write to " + self.file_path_ + " with csv")
             except IndexError as err:
                 self.logger_.error(err)
             except IOError as err:

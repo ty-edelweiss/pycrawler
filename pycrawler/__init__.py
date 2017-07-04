@@ -8,12 +8,24 @@ __version__ = "0.0.0"
 
 __format__ = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 
+__config__ = "./conf/application.conf"
+
+app = None
+if os.path.isfile(__config__):
+    with open(__config__, "r") as f:
+        lines = f.readlines()
+    app = {line.split("=")[0]: line.split("=")[1].strip() for line in lines}
+else:
+    with open(os.path.join(os.path.dirname(__file__), "../conf/default.conf"), "r") as f:
+        lines = f.readlines()
+    app = {line.split("=")[0]: line.split("=")[1].strip() for line in lines}
+
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
 stream_handler.setFormatter(logging.Formatter(__format__))
 
 file_handler = logging.handlers.RotatingFileHandler(
-    filename=os.path.join(__file__, "../../logs/pycrawler.log"),
+    filename=app["LOG_FILE"],
     maxBytes=1000,
     backupCount=3,
     encoding="utf-8"

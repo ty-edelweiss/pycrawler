@@ -12,17 +12,17 @@ from .thread import DataGetter, DataMapper
 
 class Scheduler(object):
 
-    def __init__(self):
+    def __init__(self, *args, **kwrds):
         """
         This is scheduler model, so become able to set crawling schedule.
         """
 
-    def start(self):
+    def start(self, *args, **kwrds):
         """
         starting scheduler and this method is overrided absolutely.
         """
 
-    def stop(self):
+    def stop(self, *args, **kwrds):
         """
         stopping scheduler and this method is overrided absolutely.
         """
@@ -38,13 +38,13 @@ class TimeScheduler(Scheduler):
         self.interval_time_ = interval_time
         self.running_ = False
 
-    def start(self, accessor: Accessor, appenders: List[Appender]):
+    def start(self, accessor: Accessor, appenders: List[Appender], **kwrds):
         start_time = time.time()
         self.running_ = True
 
         end_flag = False
-        getter = DataGetter(self.queue_, end_flag)
-        mapper = DataMapper(self.queue_, end_flag)
+        getter = DataGetter(self.queue_, end_flag, **kwrds)
+        mapper = DataMapper(self.queue_, end_flag, **kwrds)
         getter.run(accessor)
         mapper.run(appenders)
 
@@ -61,7 +61,6 @@ class TimeScheduler(Scheduler):
                 time.sleep(self.check_time_)
 
         self.logger_.info("Crawling scheduler shutdown")
-
 
     def stop(self) -> object:
         self.running_ = False

@@ -8,7 +8,7 @@ import webbrowser
 import requests
 from requests_oauthlib import OAuth1, OAuth2
 
-class OAuth(object):
+class OAuthModel(object):
 
     def __init__(self, api: str):
         self.logger_ = logging.getLogger(__name__)
