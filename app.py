@@ -8,9 +8,9 @@ from pycrawler.core.append import FileAppender, PostgreSQLAppender
 if __name__ == "__main__":
     with open("./tests/api.conf", "r") as f:
         lines = f.readlines()
-    api_config = {line.split("=")[0]: line.split("=")[1] for line in lines}
+    api_config = {line.split("=")[0]: line.split("=")[1].strip() for line in lines}
     api = "flickr.photos.search"
 
-    flickrCrawler = Crawler(api=api, scheduler=TimeScheduler(), appenders=[FileAppender(), PostgreSQLAppender()])
+    flickrCrawler = Crawler(api=api, scheduler=TimeScheduler())
     flickrCrawler.auth(api_config["CONSUMER_KEY"], api_config["CONSUMER_SECRET"])
     flickrCrawler.run()

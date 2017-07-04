@@ -28,7 +28,7 @@ class ConsoleAppender(Appender):
         self.lock_ = threading.Lock()
         self.logger_ = logging.getLogger(__name__)
 
-    def set(self, data: Dict[str, Any]) -> None:
+    def append(self, data: List[Dict[str, Any]]) -> None:
         with self.lock_:
             print(data)
 
@@ -41,7 +41,7 @@ class FileAppender(Appender):
         self.max_bytes_ = max_bytes
         self.max_buckups_ = max_backups
 
-    def set(self, file_path: str, column_names: List[str], data: Dict[str, Any]) -> None:
+    def append(self, file_path: str, column_names: List[str], data: List[Dict[str, Any]]) -> None:
         with self.lock_:
             if os.path.isfile(file_path):
                 headers = ", ".join(column_names)
@@ -66,7 +66,7 @@ class PostgreSQLAppender(Appender):
         self.conn_ = connection
         self.cur_ = cursor
 
-    def set(self, table_name: str, column_names: List[str], data: Dict[str, Any]) -> None:
+    def append(self, table_name: str, column_names: List[str], data: List[Dict[str, Any]]) -> None:
         with self.lock_:
             table_columns = ", ".join(["%s" for _ in range(column_names)])
             try:

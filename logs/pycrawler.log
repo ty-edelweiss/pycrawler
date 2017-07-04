@@ -1,0 +1,4 @@
+2017-07-03 22:17:46,031 INFO pycrawler.interface: Success loading the authentication of flickr configure.
+2017-07-03 22:17:46,955 INFO pycrawler.interface: Success get to request token on this crawling application by https://www.flickr.com/services/oauth/request_token
+2017-07-03 22:18:53,308 INFO pycrawler.interface: Success get to access token on this crawling application by https://www.flickr.com/services/oauth/access_token
+2017-07-03 22:18:53,308 INFO pycrawler.interface: Crawling application start up ...

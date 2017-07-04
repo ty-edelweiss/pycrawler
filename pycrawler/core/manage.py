@@ -6,6 +6,7 @@ import queue
 import logging
 from typing import List
 
+from .access import Accessor
 from .append import Appender
 from .thread import DataGetter, DataMapper
 
@@ -23,7 +24,7 @@ class Scheduler(object):
 
     def stop(self):
         """
-        stopping scheduler and this method is override absolutely.
+        stopping scheduler and this method is overrided absolutely.
         """
 
 class TimeScheduler(Scheduler):
@@ -37,12 +38,15 @@ class TimeScheduler(Scheduler):
         self.interval_time_ = interval_time
         self.running_ = False
 
-    def start(self, appenders: List[Appender]):
+    def start(self, accessor: Accessor, appenders: List[Appender]):
         start_time = time.time()
-        getter = DataGetter(self.queue_)
-        mapper = DataMapper(self.queue_, appenders)
-
         self.running_ = True
+
+        end_flag = False
+        getter = DataGetter(self.queue_, end_flag)
+        mapper = DataMapper(self.queue_, end_flag)
+        getter.run(accessor)
+        mapper.run(appenders)
 
         while self.running_:
             self.logger_.info("Crawling scheduler running ... ")
@@ -51,8 +55,8 @@ class TimeScheduler(Scheduler):
                 time.sleep(self.interval_time_)
             elif elapsed_time >= self.sleep_time_:
                 start_time = time.time()
-                getter.run()
-                mapper.run()
+                getter.run(accessor)
+                mapper.run(appenders)
             else:
                 time.sleep(self.check_time_)
 
