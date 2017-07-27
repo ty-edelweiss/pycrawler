@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<application log="./logs">
+    <api name="api_name">
+        <parameters>
+            <node name="parameter_name">parameter_value</node>
+        </parameters>
+        <oauth key="api_key" secret="api_secret">
+            <token>access_token</token>
+            <secret>access_token_secret</secret>
+        </oauth>
+    </api>
+    <console></console>
+    <file>file_name</file>
+    <database vendor="" host="" password="" port="" username="">
+        database_name
+        <table created="">table_name</table>
+    </database>
+    <contents all="">
+        <node columns="data_name" example="data_example" name="data_name" type="data_type">NULL</node>
+    </contents>
+</application>

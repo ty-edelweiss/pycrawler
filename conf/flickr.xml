@@ -1,7 +1,14 @@
-<flickr>
+<?xml version="1.0" ?>
+<organization url="https://api.flickr.com/services/rest/" status="stat" statuscode="ok">
   <method name="photos">
-    <api name="search">
-      <node name="api_key" type="str" protocol="free" required="required">
+    <api name="search" contents="photos.photo">
+      <node name="method" type="str" protocol="free" required="api">
+      </node>
+      <node name="format" type="str" protocol="json" required="format">
+      </node>
+      <node name="nojsoncallback" type="str" protocol="?" required="patch">
+      </node>
+      <node name="api_key" type="str" protocol="free" required="key">
       </node>
       <node name="user_id" type="str" protocol="free" required="optional">
       </node>
@@ -83,13 +90,21 @@
   </method>
   <method name="place">
     <api name="find">
-      <node name="api_key" type="str" protocol="free" required="required">
+      <node name="method" type="str" protocol="free" required="api">
       </node>
-      <node name="query" type="str" protocol="free" required="required">
+      <node name="format" type="str" protocol="json" required="format">
+      </node>
+      <node name="api_key" type="str" protocol="free" required="key">
+      </node>
+      <node name="query" type="str" protocol="free" required="text">
       </node>
     </api>
     <api name="getInfo">
-      <node name="api_key" type="str" protocol="free" required="required">
+      <node name="method" type="str" protocol="free" required="api">
+      </node>
+      <node name="format" type="str" protocol="json" required="format">
+      </node>
+      <node name="api_key" type="str" protocol="free" required="key">
       </node>
       <node name="place_id" type="str" protocol="free" required="optional">
       </node>
@@ -97,4 +112,4 @@
       </node>
     </api>
   </method>
-</flickr>
+</organization>

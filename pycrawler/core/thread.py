@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import uuid
 import queue
 import threading
 from typing import List, Dict, Any
@@ -12,26 +13,34 @@ from .options import OptionModel
 
 class DataGetter(threading.Thread):
 
-    def __init__(self, cache: queue.Queue, notice: bool, api_model: OptionModel, **kwrds):
-        super(DataGetter).__init__()
+    def __init__(self, accessor: Accessor, cache: queue.Queue, notice: bool, model: OptionModel):
+        super(DataGetter, self).__init__()
         self.logger_ = logging.getLogger(__name__)
+        self.accessor_ = accessor
         self.cache_ = cache
         self.flag_ = notice
-        self.options_ = api_model
+        self.model_ = model
         self.running_ = False
 
     def kill(self) -> object:
         self.running_ = False
         return self
 
-    def run(self, accessor: Accessor) -> None:
+    def run(self) -> None:
         self.running_ = True
+        self.logger_.info("Data getter process running ... ")
+
+        self.accessor_.setOptions(self.model_.options_)
 
         while self.running_:
-            self.logger_.info("Data getter process running ... ")
-            if accessor.next():
-                data = accessor.get(self.options_)
-                self.cache_.push(data)
+            if self.accessor_.next():
+                try:
+                    uid = uuid.uuid4()
+                    data = self.accessor_.get()
+                    self.logger_.info(f"Data collecting to pass other thread. data id is {uid}")
+                    self.cache_.put((uid, data), block=True, timeout=10)
+                except queue.Full as err:
+                    self.logger_.warning(err)
             else:
                 self.flag_ = True
                 break
@@ -40,28 +49,36 @@ class DataGetter(threading.Thread):
 
 class DataMapper(threading.Thread):
 
-    def __init__(self, cache: queue.Queue, notice: bool, app_model: OptionModel, **kwrds):
-        super(DataMapper).__init__()
+    def __init__(self, appenders: List[Appender], cache: queue.Queue, notice: bool, model: OptionModel):
+        super(DataMapper, self).__init__()
         self.logger_ = logging.getLogger(__name__)
+        self.appenders_ = appenders
         self.cache_ = cache
         self.flag_ = notice
-        self.options_ = app_model
+        self.model_ = model
         self.running_ = False
 
     def kill(self) -> object:
         self.running_ = False
         return self
 
-    def run(self, appenders: List[Appender]) -> None:
+    def run(self) -> None:
         self.running_ = True
+        self.logger_.info("Data mapper process running ... ")
+
+        for appender in self.appenders_:
+            appender.setOptions(self.model_.options_)
 
         while self.running_:
-            self.logger_.info("Data mapper process running ... ")
             if self.flag_ and self.cache_.empty():
                 break
             else:
-                data = self.cache_.get()
-                for appender in appenders:
-                    appender.append(data, self.options_)
+                try:
+                    uid, data = self.cache_.get(block=True, timeout=10)
+                    self.logger_.info(f"Data mapping to get other thread. data id is {uid}")
+                    for appender in self.appenders_:
+                        appender.append(data)
+                except queue.Empty as err:
+                    self.logger_.warning(err)
 
         self.logger_.info("Data mapper process shutdown")

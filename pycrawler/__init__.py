@@ -26,7 +26,7 @@ stream_handler.setFormatter(logging.Formatter(__format__))
 
 file_handler = logging.handlers.RotatingFileHandler(
     filename=app["LOG_FILE"],
-    maxBytes=1000,
+    maxBytes=100000,
     backupCount=3,
     encoding="utf-8"
 )

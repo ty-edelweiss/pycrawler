@@ -10,12 +10,12 @@ from typing import List, Dict, Any
 
 class Appender(object):
 
-    def __init__(self, *args, **kwrds):
+    def __init__(self, *args, **kwargs):
         """
         data appender multi format -> default format [ConsoleAppender].
         """
 
-    def append(self, *args, **kwrds) -> None:
+    def append(self, *args, **kwargs) -> None:
         """
         appending process by multi format
         and this method is overrided absolutely.
@@ -23,33 +23,44 @@ class Appender(object):
 
 class ConsoleAppender(Appender):
 
-    def __init__(self):
+    def __init__(self, options: Dict[str, Any] = None):
         super().__init__()
         self.lock_ = threading.Lock()
         self.logger_ = logging.getLogger(__name__)
+        self.name_ = "console"
+        self.options_ = options
+
+    def setOptions(self, options: Dict[str, Any]):
+        self.options_ = options
+        return self
 
     def append(self, data: List[Dict[str, Any]]) -> None:
         with self.lock_:
-            print(data)
+            print(data, flush=True)
 
 class FileAppender(Appender):
 
-    def __init__(self, target: str):
+    def __init__(self, options: Dict[str, Any] = None):
         super().__init__()
         self.lock_ = threading.Lock()
         self.logger_ = logging.getLogger(__name__)
-        self.self.file_path__ = target
+        self.name_ = "file"
+        self.options_ = options
 
-    def append(self, column_names: List[str], data: List[Dict[str, Any]]) -> None:
+    def setOptions(self, options: Dict[str, Any]):
+        self.options_ = options
+        return self
+
+    def append(self, data: List[Dict[str, Any]]) -> None:
         with self.lock_:
-            if os.path.isfile(self.file_path_):
-                headers = ", ".join(column_names)
-                with open(self.file_path_, "w") as f:
+            if os.path.isfile(self.options_["file"]):
+                headers = ", ".join(self.options_["columns"])
+                with open(self.options_["file"], "w") as f:
                     f.write(headers)
             try:
-                with open(self.file_path_, "a") as f:
+                with open(self.options_["flie"], "a") as f:
                     f.write(",".join(data))
-                self.logger_.info("Success write to " + self.file_path_ + " with csv")
+                self.logger_.info("Success write to " + self.options_["path"] + " with csv")
             except IndexError as err:
                 self.logger_.error(err)
             except IOError as err:
@@ -58,21 +69,30 @@ class FileAppender(Appender):
 
 class PostgreSQLAppender(Appender):
 
-    def __init__(self, connection: psycopg2.extensions.connection, cursor: psycopg2.extensions.cursor):
+    def __init__(self, options: Dict[str, Any] = None):
         super().__init__()
         self.lock_ = threading.Lock()
         self.logger_ = logging.getLogger(__name__)
-        self.conn_ = connection
-        self.cur_ = cursor
+        self.name_ = "database.postgresql"
+        self.connection_ = psycopg2.connect(options["database"]) if options is not None else None
+        self.cursor_ = self.connection_.cursor() if options is not None else None
+        self.options_ = options
 
-    def append(self, table_name: str, column_names: List[str], data: List[Dict[str, Any]]) -> None:
+    def setOptions(self, options: Dict[str, Any]):
+        self.options_ = options
+        self.connection_ = psycopg2.connect(**self.options_["database"])
+        self.cursor_ = self.connection_.cursor()
+        return self
+
+    def append(self, data: List[Dict[str, Any]]) -> None:
         with self.lock_:
-            table_columns = ", ".join(["%s" for _ in range(column_names)])
+            table_values = ", ".join(["%s" for _ in range(len(self.options_["columns"]))])
             try:
-                self.cur_.execute(f"INSERT {table_name} ({table_columns}) VALUES ({column_names})", data)
-                self.conn_.commit()
+                table_columns = ", ".join(self.options_["columns"])
+                self.cursor_.execute(f"INSERT {self.options_['table']} ({table_columns}) VALUES ({table_values})", data)
+                self.connection_.commit()
                 self.logger_.info("Success insert to postgresql database")
             except psycopg2.ProgrammingError as err:
+                self.connection_.rollback()
                 self.logger_.error(err)
             return None
-

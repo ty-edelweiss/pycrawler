@@ -8,12 +8,20 @@ import webbrowser
 import requests
 from requests_oauthlib import OAuth1, OAuth2
 
-class OAuthModel(object):
+class OAuth(object):
 
     def __init__(self, api: str):
         self.logger_ = logging.getLogger(__name__)
         self.organization_ = api.split(".")[0]
+        self.api_key_ = None
+        self.api_secret_ = None
         self.access_token_ = None
+        self.access_token_secret_ = None
+
+    def createSession(self, api_key: str, api_secret: str, access_token: str, access_token_secret: str) -> object:
+        self.api_key_, self.api_secret_  = api_key, api_secret
+        self.access_token_, self.access_token_secret_ = access_token, access_token_secret
+        return OAuth1(self.api_key_, self.api_secret_, self.access_token_, self.access_token_secret_)
 
     def auth(self, api_key: str, api_secret: str) -> object:
         self.api_key_, self.api_secret_ = api_key, api_secret
@@ -38,6 +46,7 @@ class OAuthModel(object):
             verifier=oauth_verifier
         )
         response = requests.post(access_token_url, auth=auth)
-        self.access_token_ = dict(urllib.parse.parse_qsl(response.text))
+        access_token = dict(urllib.parse.parse_qsl(response.text))
         self.logger_.info(f"Success get to access token on this crawling application by {access_token_url}")
-        return self
+        self.access_token_, self.access_token_secret_ = access_token["oauth_token"], access_token["oauth_token_secret"]
+        return OAuth1(self.api_key_, self.api_secret_, self.access_token_, self.access_token_secret_)

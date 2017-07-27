@@ -14,6 +14,6 @@ if __name__ == "__main__":
     api_options = {
         "extras": "description, license, date_upload, date_taken, owner_name, url_sq"
     }
-    flickrCrawler = Crawler(scheduler=TimeScheduler())
+    flickrCrawler = Crawler(scheduler=TimeScheduler(), appenders=[FileAppender()])
     flickrCrawler.register(api, api_config["CONSUMER_KEY"], api_config["CONSUMER_SECRET"], api_options)
     flickrCrawler.run()
