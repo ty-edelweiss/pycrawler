@@ -1,0 +1,25 @@
+<application>
+    <api name="flickr.photos.search">
+        <parameters>
+            <node name="extras">
+                description, license, date_upload, date_taken, owner_name, url_sq
+            </node>
+        </parameters>
+        <accesstoken apikey="" apisecret="">xxxxxxx</accesstoken>
+    </api>
+    <file>flickr_test.csv</file>
+    <database username="yuusaku" password="Jobs0224">
+        lab
+        <table created="">
+            flickr_test
+        </table>
+    </database>
+    <contents all="">
+        <node name="photoid" columns="photoid" type="str" example="">
+        </node>
+        <node name="longitude" column="longitude" type="double" example="">
+        </node>
+        <node name="latitude" column="latitude" type="double" example="">
+        </node>
+    </contents>
+</application>

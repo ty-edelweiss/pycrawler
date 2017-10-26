@@ -1,0 +1,17 @@
+<table>
+  <name>test</name>
+  <schema>
+    <column>
+      <name>photoid</name>
+      <type>character varying PRIMARY KEY</type>
+    </column>
+    <column>
+      <name>longitude</name>
+      <type>double precision</type>
+    </column>
+    <column>
+      <name>latitude</name>
+      <type>double precision</type>
+    </column>
+  </schema>
+</table>

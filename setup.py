@@ -13,7 +13,7 @@ version = next((line.split("=")[1].strip().replace("\"", "") for line in open(os
 print(version)
 
 try:
-    with open("README.rst") as f:
+    with open("README.md") as f:
         readme = f.read()
 except IOError:
     readme = ""

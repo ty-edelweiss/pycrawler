@@ -1,0 +1,13 @@
+# ----------------------------
+# PyCrawler configuration file
+# ----------------------------
+#
+# The commented-out settings shown in this file represent the default values.
+#
+
+#------------------------------------------------------------------------------
+# FILE LOCATIONS
+#------------------------------------------------------------------------------
+
+#log_directory = ''  # write log file in another directory
+#data_directory = '' # use data in another directory
